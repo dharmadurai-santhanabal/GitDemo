@@ -1,0 +1,355 @@
+Playwright have auto-wait(as same as cypress)  but selenium we dont have auto-wait instead we use Implicit or Explicit Wait and the waiting time will be based on what time you gave globally.
+Playwright has cross browser compatibility , Mostly supports all major browsers as same as Cypress
+It has multilingual flexibility , It supports Javascript, Typescript, Java, Python and C#(.Net) but cypress doesnt supports like this.
+
+node.js is an open source platform to run our javascript.
+
+
+npm init playwright   => In VS Terminal, Will install all dependencies of playwright 
+
+after this you can see lot of files created in the folder you created but the important one playwright.config.js which is an test runner for your entire testcase.
+and another one is package.json, it will be created for node project. here where we may have the information about the dependencies.
+node_modules folder contain all required jars.
+tests folder where we placed our all testcases.
+
+All the tests in js are called as spec file , so it better to name a file like <name>.spec.js
+
+JS is assynchronous, it means not assured every step is running in sequence, so we need to add the word await before the step, so it can wait until it complete the step.
+
+if you using await , it will activate when you async keyword for your function, else it considered that explicitly as synchronous.
+
+As per the syntax , we need to pass two arg, one is testcase name and another one is function, fn without name is anonymous fn and we can write it like ()=> .
+
+
+
+const {test} = require('@playwright/test');
+
+test('Testcasename1', async()=>
+{
+
+});
+
+
+fat arrow or fat operator : =>
+In playwright when we use something inside the curly braces {} means Object destructuring allows you to extract specific properties from an object and assign them to variables directly.
+
+fixtures are considered as global variable.
+
+newcontext means new instance like it doesnt hold any existing cookies or something unless and until you give that specifically in parameter.
+
+
+As per the config file, tests should be wait for max of 30s to report an failure and for assertion it will wait for 5s.
+
+List of browserengines we can give under use object in config file for browserName:
+
+chrome => chromium
+firefox > firefox
+safari => webkit
+
+Note: In Playwright, if you not specified any browser, it will consider it as chromium, so it will consider "Chrome browser".
+
+By default, PW wil run the test in headlessmode, so we need to say explicitly to run in head mode.
+Eg:
+
+npx playwright test --headed
+
+Command to trigger the test execution in JS:
+
+=> we cant execute the test directly instead we can run the playwright config file, it will trigger the test.
+
+npx playwright test
+
+
+here test is the one which trigger our test.
+
+Every time it will run the tests available in that entire directory, so if you want to run any particular test.
+
+you can mention it test.only instead of test annotation.
+test.only('Launching the webpage directly',async ({page})=>
+{
+    await page.goto('https://google.com');
+});
+
+
+if you want to check assertion , we need include the fixture {expect}
+const {test,expect}= require('@playwright/test');
+
+await expect(page).toHaveTitle('Internet banking - BOI');		// text should completely match.
+
+
+
+locators:
+
+CSS and XPATH are supported
+
+CSS:
+
+if id attribute is there, 
+
+#<id> or tagname#<id>
+
+if by class name means,
+
+tagname.classname
+
+for any attributes, 
+
+[attribute = "value"]
+
+if by any text means, 
+
+text = ""
+
+
+if you want to enter into editbox , you can use fill or type, In latest playwright , type method is deprecated, so we can use fill.
+
+
+to extract the content from the text => can use textContent()
+
+entering blank values "" with fill() , it will clear the exisitng values in the input field.
+
+    // If we run the tests, Page will not get loaded , so list returned with null values[].
+    // F12 > network > Fetch/XFR, We able to see some pages those are API Calls, Once the network seems idle then all things in a page get loaded.
+    //await page.waitForLoadState('networkidle');  //In Some cases its not working
+	
+if you want to waitFor certain elements to get loaded,
+Eg:
+ await page.locator('div h5 b').first().waitFor();   // waitFor will use when it returns more value, if it returns more value, it will shows strict mode voilation.
+
+2 dropdowns, 
+
+one is static or select dropdowns and another is dynamic dropdown.
+
+For static dropdown,  we can use <obj>.selectOption("<value of value attribute based on option you wish to select>").
+
+if the locator returns with multiple values like some 4 values, 
+	we can select the first one by .first() or .nth(0),
+	for second value, we can do by .second() or .nth(1),
+	for the last value, we can do by .last()
+	
+
+page.pause(); => it will allow you to see before closing the test and playwright Inspector also popedup.
+			  => Which allow the user to see the changes.
+			  
+assertion to confirm that the radio button is checked or not.
+
+expect(locator).toBeChecked();
+
+Another way to check the same is console.log(await locator.isChecked()); // its not an assertion, its an boolean value which returns true/false in your output.
+
+Note: In real time assertion is preferable.
+
+For uncheck , we have a method called .uncheck()
+	check , we have a method called .click()
+
+
+if readymade method is not available for assertion, we can do one by ourselves.
+
+await page.locator('#terms').uncheck();
+expect(await page.locator('#terms').isChecked()).toBeFalsy();   // This is to confirm that the output is false.
+expect(await page.locator('#terms').isChecked()).toBeTruthy();  // This is to confirm that the output is true.
+
+Note:
+
+When we store some values to the variable , No need for await
+
+wheneven you going to perform some action, then only we need to use await.   // Importants
+
+In above case , actions are performed inside(.isChecked()), so we need to use await inside.
+
+Promise.all()  => its an promise which will execute the sequence of steps that was passed as an array and it will in loop until it get fullfilled.
+
+				=> If you want to execute two steps assynchronously, then we can use the Promise.all()
+
+if you want to run step by step , you can do so in debug mode.
+
+npx playwright test --debug
+
+Using Playwright Inspector instead of debuging or following the logs, we can create the selectors too.
+
+if you want to create a trace for only failed tests,Under Use() then we can use trace : "retain-on-failure"
+
+if you want to take a screenshot on failure , under use(), you can add screenshot: no ,
+
+if you want to record and playback in playwright , we can pass the below command in terminal.
+
+npx playwright test  => its an normal way of triggering the test.
+
+npx playwright codegen <website>  =>
+
+if you want to find the no of elements in the array => array.count (returns no of elements matching for the selector)
+
+text selector 
+
+1 => text="<text content>"
+
+2 => ("<tagname>:has-text('dfssfdf')");   // another way using text
+
+if you want to break the loop , just give break;
+
+if the method we used is not supported for auto-wait by playwright like isVisible()
+
+then we can use .waitfor(); => it will wait for particular elements to get loaded.
+
+if you want to type anywhere letter by letter, fill() cannot be used, it will enter that in one short.
+so playwright introduce pressSequentially method to do that. like .pressSequentially()
+
+if you matching with strings we need to use === 
+
+if you want to know the existence of some text for that locator, you can use .toHaveText()
+
+whenever the selectors returns with multiple elements, have a habit of coming from the parent element.
+
+Another way assertion in comparing the two value is ,
+
+expect(parentvalue.includes(actualvalue)).toBeTruthy();   //toBeTruthy will return true if the assertion succeed.
+
+
+Locators available only in playwright:
+
+getByLabel():
+
+if anything given within the label tag, then you can use this label
+Eg:
+
+await page.getByLabel('text present in that label').click(); // instead of id or class , we can locate the element like this.
+await page.getByLabel('text present in that label').check();  // if its an radio or checkbox , we can use check()
+
+Normally playwright will help to enter the text into the input field based on the label.
+Eg:
+Scenario 1:
+
+In the below case it will work bcoz the input field is within the scope of label tag.
+<label>
+Password:
+<input type='password'/>
+</label>
+
+scenario 2: here input field is not within the label tag but the association is made with some attributes in both tags(like for and id),so it wil work
+
+<label for='text1'> Password:</label>
+
+<input id='text1' type='password'/>
+when there is a scope for typing a text, then we can avoid getByLabel, as long as we can select we can use getByLabel like Click, select, check .
+
+For dropdown, we can use the selectOption with the locator only if its have a select tag.
+Eg:
+
+await page.getByLabel('Gender').selectOption('Female');
+
+Commands for Playwright UI test runner is:
+
+npx playwright test --ui  // where we can run the tests and do the debug with the step by step screenshot, also we can run the tests from there itself.
+
+getByPlaceholder():
+if you have the placeholder attribute, then we can use the getByPlaceholder locator.
+
+getByRole():
+
+page.getByRole("")  // when we put the double quotes, it will show you the options of role that we can do in UI.
+page.getByRole("button", {name: 'Submit'});   // it will returns the all button in that page, if you want to more specific, you can pass the name of the button in second arg.
+page.getByRole("link, {name: 'shop'}");  // it will click you the navigation link with name shop.
+
+await page.getByRole('button',{name:"Cart"}).click();  // actually it returns multiple value, so we need to come from his parents.
+
+await page.getByRole("listitem").getByRole('button',{name:"Cart"}).click();
+
+Note: Moment we saved the code , it will auto run in the test runner.
+
+
+getByText();
+
+It will scan the entire page for that text.
+
+page.getByText("Sucessfully deleted");
+
+locator():
+
+page.locator("<tagname>")// it may return some multiple results.
+page.locator("<tagname>").filter({hasText: 'Nokia Edge'}).getByRole("button").click();     // then we can filter with some condition. you can hover on filter to know more options.
+
+In order to go back and forward pages in playwright with 
+
+page.goBack()  => it will go to the previous page.
+page.goForward() => will bring you to the next page.
+
+expect(locator).toBeVisible(); // assertion to make sure particular element is visible.
+expect(locator).toBeHidden(); // assertion to make sure particular element is hidden.
+
+page.on() => It will wait for the event , if any dialog is openend which is not an webelement , May be an js related.
+
+page.on('event', action to be perform for that event);
+
+Eg:
+
+page.on('dialog', dialog => dialog.accept());  // which will select ok button in that popup.  , if the page have similar popup again , no need to add it again, it will repeat this line automatically.
+page.on('dialog', dialog => dialog.dismiss());  // which will select cancelbutton in that popup.
+
+page.locator('#dfsdfds').hover()  // it will hover on some elements.
+
+if something was unable to access by your automation, you can check whether is there any frames Eg: Tag like <iframe> or <frameset>
+
+
+const newframe = await page.frameLocator("#dfdsfdsf");  //if you want to switch it to frames, you can do that by using the frame name or by its id.
+newframe.    // then you can access the element with that frame using the frame object we created.
+
+if some locators returns with multiple elements and one of that is invisible means we can make playwright to stick with the visible elements as below,
+Eg: : visible along with locator.
+
+page.locator("li a[href*='limited-access']:visible").click();
+
+API Calls:
+
+when you perform some actions in UI, there may be an api calls in the backend.
+
+F12 > Network > Fetch/XFR > Some list of things were displayed after the action performed, those are the api calls.
+
+In Header tab, you can see what that api calls did ?
+
+application > storage > local storage =>the response was stored in the storage as tokens,it will know on which use the action was performed.
+
+if same browser, you logged into the website and opening the other tab to login to the same site but it didnt ask for the password, because already your credentials are stored as token(session cookies), if you work on incognito , it will not work it ask for the credentials.
+because there is no session cookies.
+
+
+Couple of annotations like 
+
+test.beforeAll()  // the code within this block executed before your all tests Eg: test1, test2, test3.
+
+test.beforeEach() // the code within this block executed before each tests Eg: test1,test2,test3.
+
+In playwright , you need to declare an object called request for api's.
+like we create an context from browser fixture, we will use request to create an new context.
+const {test,expect,request} = require('@/playwright/tests'); // this request obj will help you to call API's and work with API Responses.
+const apiContext = request.newContext(); 
+
+then instead of making a newPage, we are making a call here like POST method.
+
+apiContext.post('url', {date: });  // second parameter of the post method should be enclosed within curly braces.
+
+when you constructing the request, you can do with the payload.
+
+Success code in API are 200(GET Requests) , 201(POST Requests), 204(DELETE OR PUT Requests).
+
+
+Injecting the Token into Local Storage: 
+
+using addInitScript
+Eg:
+
+page.addInitScript(value => {
+    window.localStorage.setItem('token', value);    //'token' : 'value like sfdsgsdsfdsfdsfsdfsdfhggfgerd' is an key which available in payload page.
+}, token);			// token is the variable we created.
+
+if you have steps with await in your method , then you need to make that method as async
+
+	async <method>()
+	{
+
+	}
+
+
+if you export some class, it wil be globally visible to other classes in your projects.
+
+module.exports = {classname};
+
